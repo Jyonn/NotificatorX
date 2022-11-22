@@ -1,5 +1,6 @@
 from SmartDjango import Analyse, P, E
 from django import views
+from oba import Obj
 
 from utils.auth import Auth
 
@@ -12,7 +13,7 @@ class AuthView(views.View):
         账号认证
         POST /api/auth
         """
-        return Auth.login(**r.d.dict())
+        return Auth.login(**Obj.raw(r.d))
 
 
 class ErrorView(views.View):
