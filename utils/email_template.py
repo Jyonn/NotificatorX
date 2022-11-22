@@ -6,7 +6,7 @@ class EmailTemplate:
     <div style="padding:0;margin:0;box-sizing:border-box;width:100%;display:flex;justify-content:center;background:#F8F8F8;">
      <div style="width:500px;position:relative;">
       <div style="height:50px;line-height:50px;width:100%;">
-       <div style="color:#999999;padding:0 20px;font-size:12px;">以下内容为齐天簿自动发送</div>
+       <div style="color:#999999;padding:0 20px;font-size:12px;">以下内容为NoTiX自动发送</div>
       </div>
       <div>
        <div style="position:relative;border-radius:10px;background:white;padding:50px;">
@@ -16,7 +16,7 @@ class EmailTemplate:
        </div>
       </div>
       <div style="height:50px;line-height:50px;width:100%;">
-       <div style="color:#999999;padding:0 20px;font-size:12px;">连接世界，看见精彩 | <a href="https://qt.6-79.cn/user/login" style="color:#FFB500;">齐天簿</a></div>
+       <div style="color:#999999;padding:0 20px;font-size:12px;">连接世界，看见精彩 | <a href="https://github.com/Jyonn/NotificatorX" style="color:#FFB500;">NoTiX</a></div>
       </div>
      </div>
     </div>'''
