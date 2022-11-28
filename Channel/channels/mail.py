@@ -24,6 +24,7 @@ class Mail(BaseChannel):
         appellation: Optional[str] = None
         content: str
 
+    active = True
     mail_accounts = Global.mail_accounts
     # sender = Global.SENDER_EMAIL
     # token = Global.SENDER_PASSWORD
