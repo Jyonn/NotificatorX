@@ -1,6 +1,16 @@
+import json
+
 from SmartDjango import NetPacker
 
 from Config.models import Config, CI
+
+
+class MailAccount:
+    def __init__(self, mail):
+        self.mail = mail
+        self.password = Config.get_value_by_key(f'{CI.SENDER_EMAIL_PWD}_{mail}')
+        self.port = Config.get_value_by_key(f'{CI.SMTP_PORT}_{mail}')
+        self.server = Config.get_value_by_key(f'{CI.SMTP_SERVER}_{mail}')
 
 
 class Global:
@@ -16,6 +26,9 @@ class Global:
     SMTP_SERVER = Config.get_value_by_key(CI.SMTP_SERVER)
 
     YUNPIAN_APPKEY = Config.get_value_by_key(CI.YUNPIAN_APPKEY)
+
+    SENDERS = json.loads(Config.get_value_by_key(CI.SENDERS))
+    mail_accounts = [MailAccount(mail) for mail in SENDERS]
 
 
 # NetPacker.set_mode(debug=False)

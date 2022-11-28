@@ -78,6 +78,8 @@ class ConfigInstance:
     SMTP_SERVER = 'SMTP_SERVER'
     SMTP_PORT = 'SMTP_PORT'
 
+    SENDERS = 'SENDERS'
+
     YUNPIAN_APPKEY = 'YUNPIAN_APPKEY'
 
 

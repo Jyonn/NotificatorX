@@ -1,5 +1,6 @@
 from SmartDjango import Analyse
 from django import views
+from oba import Obj
 from smartify import P
 
 from Account.models import AccountP, Account
@@ -24,7 +25,7 @@ class AccountView(views.View):
         创建账号
         POST /api/account
         """
-        account = Account.create(**r.d.dict())
+        account = Account.create(**Obj.raw(r.d))
         return account.d()
 
     @staticmethod
