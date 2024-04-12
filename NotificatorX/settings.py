@@ -9,6 +9,9 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+import pymysql
+pymysql.install_as_MySQLdb()
+
 import os
 from pathlib import Path
 
@@ -20,9 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '+!^qwb6wgc9x+ju_56zk*-06#(qbs_ygh1h26ejxsmo5q44k#t'
+SECRET_KEY = 'YOUR-SECRET-KEY'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+PROJ_INIT = True
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']

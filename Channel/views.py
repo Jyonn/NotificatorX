@@ -1,5 +1,5 @@
 from SmartDjango import Analyse
-from django import views
+from django.views import View
 from smartify import P
 
 from Channel.channels.bark import Bark
@@ -8,7 +8,7 @@ from Channel.channels.sms import SMS
 from utils.auth import Auth
 
 
-class ChannelView(views.View):
+class ChannelView(View):
     list = [Bark, Mail, SMS]
 
     @staticmethod
@@ -19,7 +19,7 @@ class ChannelView(views.View):
         return list(map(lambda c: c.__name__, filter(lambda c: c.active, ChannelView.list)))
 
 
-class BarkView(views.View):
+class BarkView(View):
     @staticmethod
     @Analyse.r(b=[
         'uri', 'content',
@@ -33,7 +33,7 @@ class BarkView(views.View):
         return Bark.run(r.d, r.d.account)
 
 
-class SMSView(views.View):
+class SMSView(View):
     @staticmethod
     @Analyse.r(b=['phone', 'content'])
     @Auth.require_account()
@@ -44,7 +44,7 @@ class SMSView(views.View):
         return SMS.run(r.d, r.d.account)
 
 
-class MailView(views.View):
+class MailView(View):
     @staticmethod
     @Analyse.r(b=['mail', 'content', P('appellation').null(), P('subject').default('中央通知')])
     @Auth.require_account()
