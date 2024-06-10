@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'YOUR-SECRET-KEY'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-PROJ_INIT = True
+PROJ_INIT = False
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
@@ -60,9 +60,10 @@ MIDDLEWARE = [
 # 增加跨域
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
-# CORS_ORIGIN_WHITELIST = (
-#     '*'
-# )
+CORS_ORIGIN_WHITELIST = (
+    'https://*',
+    'http://*'
+)
 CORS_ALLOW_METHODS = (
     'DELETE',
     'GET',
@@ -86,6 +87,7 @@ CORS_ALLOW_HEADERS = (
     'x-requested-with',
     'Pragma',
     'Token',
+    'Auth'
 )
 
 
