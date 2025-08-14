@@ -1,7 +1,7 @@
 from typing import Optional
 from urllib.parse import quote
 
-from SmartDjango import E, Hc
+from smartdjango import Error, Code
 
 from Account.models import Account
 from Channel.channels.base import BaseChannel
@@ -10,9 +10,9 @@ from utils.grabber import Grabber
 quote_safe = lambda x: quote(x, safe='')
 
 
-@E.register(id_processor=E.idp_cls_prefix())
-class BarkError:
-    REQUEST = E('Bark Request', hc=Hc.InternalServerError)
+@Error.register
+class BarkErrors:
+    REQUEST = Error('Bark Request', code=Code.InternalServerError)
 
 
 class Bark(BaseChannel):
@@ -48,4 +48,4 @@ class Bark(BaseChannel):
         try:
             cls.worker.get(path, query=query)
         except Exception as err:
-            raise BarkError.REQUEST(debug_message=err)
+            raise BarkErrors.REQUEST(debug_message=err)

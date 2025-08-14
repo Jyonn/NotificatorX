@@ -1,7 +1,5 @@
 import json
 
-from SmartDjango import NetPacker
-
 from Config.models import Config, CI
 
 
@@ -30,8 +28,6 @@ class Global:
     SENDERS = json.loads(Config.get_value_by_key(CI.SENDERS))
     mail_accounts = [MailAccount(mail) for mail in SENDERS]
 
-
-# NetPacker.set_mode(debug=False)
 
 import ssl
 

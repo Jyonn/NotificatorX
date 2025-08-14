@@ -1,12 +1,12 @@
 import abc
 
-from SmartDjango import E
 from pydantic import BaseModel
+from smartdjango import Error, Code
 
 
-@E.register(id_processor=E.idp_cls_prefix())
-class ChannelError:
-    INACTIVE = E("Channel Inactive")
+@Error.register
+class ChannelErrors:
+    INACTIVE = Error("Channel Inactive", code=Code.Forbidden)
 
 
 class BaseChannel(abc.ABC):
@@ -19,5 +19,5 @@ class BaseChannel(abc.ABC):
     @classmethod
     def run(cls, body: BaseModel, user):
         if not cls.active:
-            raise ChannelError.INACTIVE
+            raise ChannelErrors.INACTIVE
         return cls.handler(body, user)

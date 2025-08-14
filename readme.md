@@ -12,8 +12,8 @@ NotificatorX is a notification system that allows you to send notifications to y
  
 #### Requirements
 
-- django == 3.1.12
-- SmartDjango == 3.5.1
+- django > 5
+- smartdjango > 4.3.0
 - mysql database with configuration file `mysql.local.conf`
 
 #### Admin Settings

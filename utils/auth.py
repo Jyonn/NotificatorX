@@ -1,6 +1,6 @@
 from functools import wraps
 
-from SmartDjango import E
+from smartdjango import analyse, Error, Code
 
 from Account.models import Account
 from NotificatorX.global_settings import Global
@@ -8,13 +8,13 @@ from utils.hash import md5
 from utils.jtoken import JWT
 
 
-@E.register()
-class AuthError:
-    REQUIRE_LOGIN = E("需要登录")
-    FAIL_AUTH = E("登录失败")
+@Error.register
+class AuthErrors:
+    REQUIRE_LOGIN = Error("需要登录", code=Code.Unauthorized)
+    FAIL_AUTH = Error("登录失败", code=Code.Unauthorized)
 
-    REQUIRE_ACCOUNT = E("需要口令")
-    FAIL_ACCOUNT = E("口令错误")
+    REQUIRE_ACCOUNT = Error("需要口令", code=Code.Unauthorized)
+    FAIL_ACCOUNT = Error("口令错误", code=Code.BadRequest)
 
 
 class Auth:
@@ -28,7 +28,7 @@ class Auth:
     def login(cls, email, password):
         if email == Global.ADMIN_EMAIL and md5(password) == Global.ADMIN_PASSWORD:
             return cls.get_login_token()
-        raise AuthError.FAIL_AUTH
+        raise AuthErrors.FAIL_AUTH
 
     @classmethod
     def require_login(cls):
@@ -38,10 +38,10 @@ class Auth:
                 try:
                     jwt_str = r.META.get('HTTP_TOKEN')
                     if jwt_str is None:
-                        raise AuthError.REQUIRE_LOGIN
+                        raise AuthErrors.REQUIRE_LOGIN
                     JWT.decrypt(jwt_str)
                 except Exception as err:
-                    raise AuthError.REQUIRE_LOGIN(debug_message=err)
+                    raise AuthErrors.REQUIRE_LOGIN(debug_message=err)
                 return func(r, *args, **kwargs)
             return wrapper
         return decorator
@@ -50,17 +50,18 @@ class Auth:
     def require_account(cls):
         def decorator(func):
             @wraps(func)
-            def wrapper(r, *args, **kwargs):
+            def wrapper(*args, **kwargs):
+                request = analyse.get_request(*args)
                 try:
-                    auth = r.META.get('HTTP_AUTH')
+                    auth = request.META.get('HTTP_AUTH')
                     if auth is None:
-                        raise AuthError.REQUIRE_ACCOUNT
+                        raise AuthErrors.REQUIRE_ACCOUNT
                     auth = auth.split('$', 1)
                     if len(auth) != 2:
-                        raise AuthError.FAIL_ACCOUNT
-                    r.d.account = Account.auth(*auth)
+                        raise AuthErrors.FAIL_ACCOUNT
+                    request.data.account = Account.auth(*auth)
                 except Exception as err:
-                    raise AuthError.REQUIRE_ACCOUNT(debug_message=err)
-                return func(r, *args, **kwargs)
+                    raise AuthErrors.REQUIRE_ACCOUNT(debug_message=err)
+                return func(*args, **kwargs)
             return wrapper
         return decorator

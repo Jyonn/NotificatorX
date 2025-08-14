@@ -1,4 +1,4 @@
-from SmartDjango import E, Hc
+from smartdjango import Error, Code
 
 from Account.models import Account
 from NotificatorX.global_settings import Global
@@ -6,9 +6,9 @@ from Channel.channels.base import BaseChannel
 from utils.grabber import Grabber
 
 
-@E.register(id_processor=E.idp_cls_prefix())
-class SMSError:
-    REQUEST = E('SMS Request', hc=Hc.InternalServerError)
+@Error.register
+class SMSErrors:
+    REQUEST = Error('SMS Request', code=Code.InternalServerError)
 
 
 class SMS(BaseChannel):
@@ -40,4 +40,4 @@ class SMS(BaseChannel):
                 mobile=body.phone,
             ))
         except Exception as err:
-            raise SMSError.REQUEST(debug_message=err)
+            raise SMSErrors.REQUEST(debug_message=err)

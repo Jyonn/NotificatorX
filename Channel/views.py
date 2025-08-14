@@ -1,6 +1,5 @@
-from SmartDjango import Analyse
 from django.views import View
-from smartify import P
+from smartdjango import analyse, Validator
 
 from Channel.channels.bark import Bark
 from Channel.channels.mail import Mail
@@ -11,8 +10,7 @@ from utils.auth import Auth
 class ChannelView(View):
     list = [Bark, Mail, SMS]
 
-    @staticmethod
-    def get(_):
+    def get(self, request):
         """
         GET /api/channel/
         """
@@ -20,36 +18,43 @@ class ChannelView(View):
 
 
 class BarkView(View):
-    @staticmethod
-    @Analyse.r(b=[
-        'uri', 'content',
-        P('title').null(), P('sound').null(), P('url').null(), P('icon').null(), P('group').null()
-    ])
+    @analyse.json(
+        'uri',
+        'content',
+        Validator('title').null().default(None),
+        Validator('sound').null().default(None),
+        Validator('url').null().default(None),
+        Validator('icon').null().default(None),
+        Validator('group').null().default(None)
+    )
     @Auth.require_account()
-    def post(r):
+    def post(self, request):
         """
         POST /api/channel/bark
         """
-        return Bark.run(r.d, r.d.account)
+        return Bark.run(request.json, request.data.account)
 
 
 class SMSView(View):
-    @staticmethod
-    @Analyse.r(b=['phone', 'content'])
+    @analyse.json('phone', 'content')
     @Auth.require_account()
-    def post(r):
+    def post(self, request):
         """
         POST /api/channel/sms
         """
-        return SMS.run(r.d, r.d.account)
+        return SMS.run(request.json, request.data.account)
 
 
 class MailView(View):
-    @staticmethod
-    @Analyse.r(b=['mail', 'content', P('appellation').null(), P('subject').default('中央通知')])
+    @analyse.json(
+        'mail',
+        'content',
+        Validator('appellation').null().default(None),
+        Validator('subject').default('中央通知').null()
+    )
     @Auth.require_account()
-    def post(r):
+    def post(self, request):
         """
         POST /api/channel/mail
         """
-        return Mail.run(r.d, r.d.account)
+        return Mail.run(request.json, request.data.account)

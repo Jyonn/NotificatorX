@@ -4,7 +4,7 @@ from email.mime.text import MIMEText
 from email.utils import formataddr
 from typing import Optional
 
-from SmartDjango import E, Hc
+from smartdjango import Code, Error
 
 from Account.models import Account
 from NotificatorX.global_settings import Global, MailAccount
@@ -12,9 +12,9 @@ from Channel.channels.base import BaseChannel
 from utils.email_template import EmailTemplate
 
 
-@E.register(id_processor=E.idp_cls_prefix())
-class MailError:
-    REQUEST = E('Mail Request', hc=Hc.InternalServerError)
+@Error.register
+class MailErrors:
+    REQUEST = Error('Mail Request', code=Code.InternalServerError)
 
 
 class Mail(BaseChannel):
@@ -59,4 +59,4 @@ class Mail(BaseChannel):
             server.sendmail(mail_account.mail, [body.mail, ], msg.as_string())
             server.quit()
         except Exception as err:
-            raise MailError.REQUEST(debug_message=err)
+            raise MailErrors.REQUEST(debug_message=err)
