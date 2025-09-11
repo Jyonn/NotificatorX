@@ -25,7 +25,7 @@ class Global:
 
     YUNPIAN_APPKEY = Config.get_value_by_key(CI.YUNPIAN_APPKEY)
 
-    SENDERS = json.loads(Config.get_value_by_key(CI.SENDERS))
+    SENDERS = json.loads(Config.get_value_by_key(CI.SENDERS) or '{}')
     mail_accounts = [MailAccount(mail) for mail in SENDERS]
 
 

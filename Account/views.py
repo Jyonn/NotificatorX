@@ -29,7 +29,7 @@ class AccountView(views.View):
     @analyse.argument(AccountParams.id_getter)
     @analyse.json(
         AccountParams.nick.null().default(None),
-        Validator('token').null().default(None).process(bool)
+        Validator('token').null().default(None).to(bool)
     )
     def put(self, request):
         """
