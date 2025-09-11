@@ -34,15 +34,16 @@ class Auth:
     def require_login(cls):
         def decorator(func):
             @wraps(func)
-            def wrapper(r, *args, **kwargs):
+            def wrapper(*args, **kwargs):
                 try:
-                    jwt_str = r.META.get('HTTP_TOKEN')
-                    if jwt_str is None:
+                    request = analyse.get_request(*args)
+                    token = request.META.get('HTTP_TOKEN')
+                    if token is None:
                         raise AuthErrors.REQUIRE_LOGIN
-                    JWT.decrypt(jwt_str)
+                    JWT.decrypt(token)
                 except Exception as err:
-                    raise AuthErrors.REQUIRE_LOGIN(debug_message=err)
-                return func(r, *args, **kwargs)
+                    raise AuthErrors.REQUIRE_LOGIN(details=err)
+                return func(*args, **kwargs)
             return wrapper
         return decorator
 
@@ -61,7 +62,7 @@ class Auth:
                         raise AuthErrors.FAIL_ACCOUNT
                     request.data.account = Account.auth(*auth)
                 except Exception as err:
-                    raise AuthErrors.REQUIRE_ACCOUNT(debug_message=err)
+                    raise AuthErrors.REQUIRE_ACCOUNT(details=err)
                 return func(*args, **kwargs)
             return wrapper
         return decorator
