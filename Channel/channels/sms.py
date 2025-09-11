@@ -40,4 +40,4 @@ class SMS(BaseChannel):
                 mobile=body.phone,
             ))
         except Exception as err:
-            raise SMSErrors.REQUEST(debug_message=err)
+            raise SMSErrors.REQUEST(details=err)

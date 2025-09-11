@@ -1,7 +1,7 @@
 import abc
 
 from pydantic import BaseModel
-from smartdjango import Error, Code
+from smartdjango import Error, Code, OK
 
 
 @Error.register
@@ -20,4 +20,6 @@ class BaseChannel(abc.ABC):
     def run(cls, body: BaseModel, user):
         if not cls.active:
             raise ChannelErrors.INACTIVE
-        return cls.handler(body, user)
+        cls.handler(body, user)
+
+        return OK

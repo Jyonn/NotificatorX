@@ -59,4 +59,4 @@ class Mail(BaseChannel):
             server.sendmail(mail_account.mail, [body.mail, ], msg.as_string())
             server.quit()
         except Exception as err:
-            raise MailErrors.REQUEST(debug_message=err)
+            raise MailErrors.REQUEST(details=err)

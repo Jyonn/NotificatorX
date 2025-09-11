@@ -1,7 +1,7 @@
 from typing import Optional
 from urllib.parse import quote
 
-from smartdjango import Error, Code
+from smartdjango import Error, Code, OK
 
 from Account.models import Account
 from Channel.channels.base import BaseChannel
@@ -48,4 +48,4 @@ class Bark(BaseChannel):
         try:
             cls.worker.get(path, query=query)
         except Exception as err:
-            raise BarkErrors.REQUEST(debug_message=err)
+            raise BarkErrors.REQUEST(details=err)
