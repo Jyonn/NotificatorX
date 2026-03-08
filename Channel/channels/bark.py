@@ -1,10 +1,10 @@
-from typing import Optional
 from urllib.parse import quote
 
-from smartdjango import Error, Code, OK
+from smartdjango import Error, Code
 
 from Account.models import Account
 from Channel.channels.base import BaseChannel
+from Channel.channels.formats import MessageFormats
 from utils.grabber import Grabber
 
 quote_safe = lambda x: quote(x, safe='')
@@ -16,32 +16,26 @@ class BarkErrors:
 
 
 class Bark(BaseChannel):
-    class Body:
-        uri: str
-        content: str
-        title: Optional[str] = None
-        sound: Optional[str] = None
-        icon: Optional[str] = None
-        group: Optional[str] = None
-        url: Optional[str] = None
-
+    key = 'bark'
     worker = Grabber()
     active = True
+    supported_formats = {MessageFormats.TEXT, MessageFormats.MARKDOWN}
 
     @classmethod
-    def handler(cls, body: Body, account: Account):
-        if not body.uri.endswith('/'):
-            body.uri += '/'
+    def handler(cls, target: str, message: dict, options: dict, account: Account, format_: str):
+        uri = target
+        if not uri.endswith('/'):
+            uri += '/'
 
-        if not body.title:
-            body.title = ''
-        body.title = '【{}】{}'.format(account.nick, body.title)
-        path = '%s%s/%s' % (body.uri, quote_safe(body.title), quote_safe(body.content))
+        title = message.get('title') or options.get('title') or ''
+        title = '【{}】{}'.format(account.nick, title)
+        content = str(message.get('body'))
+        path = '%s%s/%s' % (uri, quote_safe(title), quote_safe(content))
 
         query = dict()
         params = ['sound', 'url', 'icon', 'group']
         for param in params:
-            value = getattr(body, param)
+            value = options.get(param)
             if value:
                 query[param] = value
 

@@ -3,11 +3,11 @@ from smartdjango import analyse, Validator, OK
 
 from Account.models import Account
 from Account.params import AccountParams
-from utils.auth import Auth
+from utils import auth
 
 
 class AccountView(views.View):
-    @Auth.require_login()
+    @auth.require_login
     def get(self, request):
         """
         获取账号列表
@@ -15,7 +15,7 @@ class AccountView(views.View):
         """
         return Account.get_all()
 
-    @Auth.require_login()
+    @auth.require_login
     @analyse.json(AccountParams.name, AccountParams.nick)
     def post(self, request):
         """
@@ -25,7 +25,7 @@ class AccountView(views.View):
         account = Account.create(**request.json())
         return account.d()
 
-    @Auth.require_login()
+    @auth.require_login
     @analyse.argument(AccountParams.id_getter)
     @analyse.json(
         AccountParams.nick.null().default(None),
@@ -43,7 +43,7 @@ class AccountView(views.View):
             account.update(request.json.nick)
         return account.d()
 
-    @Auth.require_login()
+    @auth.require_login
     @analyse.argument(AccountParams.id_getter)
     def delete(self, request):
         """

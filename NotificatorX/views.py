@@ -1,7 +1,7 @@
 from django import views
 from smartdjango import analyse, Validator, Error
 
-from utils.auth import Auth
+from utils import auth
 
 
 class AuthView(views.View):
@@ -14,7 +14,7 @@ class AuthView(views.View):
         账号认证
         POST /api/auth
         """
-        return Auth.login(**request.json())
+        return auth.authenticate(**request.json())
 
 
 class ErrorView(views.View):
