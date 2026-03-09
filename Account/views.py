@@ -1,5 +1,5 @@
 from django import views
-from smartdjango import analyse, Validator, OK
+from smartdjango import analyse, OK
 
 from Account.models import Account
 from Account.params import AccountParams
@@ -28,8 +28,9 @@ class AccountView(views.View):
     @auth.require_login
     @analyse.argument(AccountParams.id_getter)
     @analyse.json(
-        AccountParams.nick.null().default(None),
-        Validator('token').null().default(None).to(bool)
+        AccountParams.name.copy().null().default(None),
+        AccountParams.nick.copy().null().default(None),
+        AccountParams.renew,
     )
     def put(self, request):
         """
@@ -37,10 +38,12 @@ class AccountView(views.View):
         PUT /api/account/:id
         """
         account = request.argument.account
-        if request.json.token:
+        account.update(
+            name=request.json.name,
+            nick=request.json.nick,
+        )
+        if request.json.renew:
             account.renew_token()
-        if request.json.nick:
-            account.update(request.json.nick)
         return account.d()
 
     @auth.require_login

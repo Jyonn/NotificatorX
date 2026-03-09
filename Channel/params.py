@@ -116,12 +116,3 @@ class MailSenderParams(metaclass=Params):
     smtp_port = Validator('smtp_port').to(int).bool(positive_int, message='smtp_port must be a positive integer')
     enabled = Validator('enabled').bool(lambda v: isinstance(v, bool), message='enabled must be boolean')
     weight = Validator('weight').to(int).bool(positive_int, message='weight must be a positive integer')
-    enabled_create = enabled.copy().null().default(True)
-    weight_create = weight.copy().null().default(1)
-
-    email_optional = email.copy().null().default(None)
-    password_optional = password.copy().null().default(None)
-    smtp_server_optional = smtp_server.copy().null().default(None)
-    smtp_port_optional = smtp_port.copy().null().default(None)
-    enabled_optional = enabled.copy().null().default(None)
-    weight_optional = weight.copy().null().default(None)

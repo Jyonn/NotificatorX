@@ -74,7 +74,12 @@ class Account(Model):
     def d(self):
         return self.dictify('id', 'name', 'token', 'nick')
 
-    def update(self, nick):
-        self.nick = nick
+    def update(self, name=None, nick=None):
+        if name is not None and name != self.name:
+            if Account.objects.filter(name=name).exists():
+                raise AccountErrors.ALREADY_EXIST
+            self.name = name
+        if nick is not None:
+            self.nick = nick
         self.save()
         return self

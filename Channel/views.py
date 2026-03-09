@@ -45,8 +45,8 @@ class MailSenderListView(View):
         MailSenderParams.password,
         MailSenderParams.smtp_server,
         MailSenderParams.smtp_port,
-        MailSenderParams.enabled_create,
-        MailSenderParams.weight_create,
+        MailSenderParams.enabled.copy().null().default(True),
+        MailSenderParams.weight.copy().null().default(1),
     )
     def post(self, request):
         """
@@ -65,12 +65,12 @@ class MailSenderItemView(View):
 
     @auth.require_login
     @analyse.json(
-        MailSenderParams.email_optional,
-        MailSenderParams.password_optional,
-        MailSenderParams.smtp_server_optional,
-        MailSenderParams.smtp_port_optional,
-        MailSenderParams.enabled_optional,
-        MailSenderParams.weight_optional,
+        MailSenderParams.email.copy().null().default(None),
+        MailSenderParams.password.copy().null().default(None),
+        MailSenderParams.smtp_server.copy().null().default(None),
+        MailSenderParams.smtp_port.copy().null().default(None),
+        MailSenderParams.enabled.copy().null().default(None),
+        MailSenderParams.weight.copy().null().default(None),
     )
     def put(self, request, sender_id):
         """

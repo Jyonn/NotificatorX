@@ -8,6 +8,6 @@ class AccountParams(metaclass=Params):
 
     name: Validator
     nick: Validator
-    token: Validator
+    renew = Validator('renew').null().default(False).to(bool)
 
     id_getter = Validator('id', final_name='account').to(Account.get_by_id)
