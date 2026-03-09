@@ -53,11 +53,21 @@ Startup validation is enabled for mail sender configuration. Invalid or incomple
 
 Mail sender admin APIs (require admin `Token` header):
 
-- `GET /api/channel/mail-senders`: list senders
-- `POST /api/channel/mail-senders`: create sender
-- `GET /api/channel/mail-senders/<sender_id>`: get sender
-- `PUT /api/channel/mail-senders/<sender_id>`: update sender
-- `DELETE /api/channel/mail-senders/<sender_id>`: delete sender
+- `GET /api/channel/mail`: list senders
+- `POST /api/channel/mail`: create sender
+- `GET /api/channel/mail/<sender_id>`: get sender
+- `PUT /api/channel/mail/<sender_id>`: update sender
+- `DELETE /api/channel/mail/<sender_id>`: delete sender
+
+Message sending API:
+
+- `POST /api/channel/send` (the only send endpoint)
+
+Delivery log table:
+
+- `Channel_delivery_log`
+- fields: `request_id`, `account_id`, `channel`, `message`, `delivery`, `request_time`, `finish_time`, `success`, `error`
+- write strategy: insert log before channel execution (`success=false`), mark `success=true` after each delivery succeeds
 
 Create payload example:
 

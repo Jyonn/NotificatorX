@@ -1,10 +1,13 @@
 import uuid
 import oba
+import json
 
 from smartdjango import Error, Code, OK
+from django.utils import timezone
 
 from Channel.channels.bark import Bark
 from Channel.channels.mail import Mail
+from Channel.models import ChannelDeliveryLog
 from Channel.channels.sms import SMS
 from Channel.channels.webhook import Webhook
 
@@ -27,25 +30,44 @@ class ChannelDispatcher:
         return [key for key, channel in cls.channels.items() if channel.active]
 
     @classmethod
+    def to_json_text(cls, value):
+        return json.dumps(value, ensure_ascii=False, default=str)
+
+    @classmethod
     def send(cls, message, deliveries, account):
         message = oba.raw(message)
-        # deliveries = oba.raw(deliveries)
+        request_id = str(uuid.uuid4())
 
         for delivery in deliveries:
-            channel_key = delivery.channel
+            delivery_data = oba.raw(delivery)
+            channel_key = delivery_data['channel']
             channel = cls.channels.get(channel_key)
             if channel is None:
                 raise DispatchErrors.UNSUPPORTED_CHANNEL(channel=channel_key)
-            channel.run(
-                target=delivery.target,
-                message=message,
-                options=oba.raw(delivery.options or {}),
-                user=account,
+            log = ChannelDeliveryLog.objects.create(
+                request_id=request_id,
+                account=account,
+                channel=channel_key,
+                message=cls.to_json_text(message),
+                delivery=cls.to_json_text(delivery_data),
+                success=False,
             )
+            try:
+                channel.run(
+                    target=delivery_data['target'],
+                    message=message,
+                    options=oba.raw(delivery_data.get('options') or {}),
+                    user=account,
+                )
+                log.success = True
+                log.finish_time = timezone.now()
+                log.save(update_fields=['success', 'finish_time'])
+            except Exception as err:
+                log.error = str(err)
+                log.finish_time = timezone.now()
+                log.save(update_fields=['error', 'finish_time'])
+                raise
 
-        return OK
-        # return {
-        #     'request_id': str(uuid.uuid4()),
-        #     'message': message,
-        #     'deliveries': deliveries,
-        # }
+        return {
+            'request_id': request_id,
+        }
