@@ -3,3 +3,7 @@ smartdjango
 PyJWT
 PyMySQL
 cryptography
+alibabacloud_credentials
+alibabacloud_dypnsapi20170525
+alibabacloud_tea_openapi
+alibabacloud_tea_util

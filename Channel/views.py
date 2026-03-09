@@ -70,7 +70,7 @@ class BarkView(View):
 
 
 class SMSView(View):
-    @analyse.json(ChannelParams.phone, ChannelParams.content)
+    @analyse.json(ChannelParams.phone, ChannelParams.code, ChannelParams.time)
     @auth.require_account
     def post(self, request):
         """
@@ -78,8 +78,11 @@ class SMSView(View):
         """
         return ChannelDispatcher.send(
             message={
-                'format': MessageFormats.TEXT,
-                'body': request.json.content,
+                'format': MessageFormats.VERIFICATION,
+                'body': {
+                    'code': request.json.code,
+                    'time': request.json.time,
+                },
             },
             deliveries=[{
                 'channel': 'sms',

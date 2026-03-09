@@ -67,6 +67,14 @@ def translate(locale, key, **kwargs):
             NotifyLocales.EN_US: 'Notification',
             NotifyLocales.ZH_CN: '通知',
         },
+        'mail.verification_subject': {
+            NotifyLocales.EN_US: 'Verification Code',
+            NotifyLocales.ZH_CN: '验证码',
+        },
+        'mail.verification_content': {
+            NotifyLocales.EN_US: 'Your verification code is {code}. It is valid for {time} minutes.',
+            NotifyLocales.ZH_CN: '你的验证码是 {code}，{time} 分钟内有效。',
+        },
         'mail.greeting': {
             NotifyLocales.EN_US: 'Hi {recipient_name},',
             NotifyLocales.ZH_CN: '{recipient_name}，你好：',
@@ -82,6 +90,10 @@ def translate(locale, key, **kwargs):
         'sms.default_template': {
             NotifyLocales.EN_US: '[Notificator] {name}: {message}',
             NotifyLocales.ZH_CN: '【Notificator】{name}：{message}',
+        },
+        'sms.verification_template': {
+            NotifyLocales.EN_US: '[Notificator] Verification code: {code}. Valid for {time} min.',
+            NotifyLocales.ZH_CN: '【Notificator】验证码：{code}，{time} 分钟内有效。',
         },
     }
     lang = normalize_locale(locale)

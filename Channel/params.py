@@ -7,6 +7,7 @@ from Channel.channels.formats import MessageFormats
 from utils.i18n import parse_locale
 
 sender_id_regex = re.compile(r'^[A-Za-z0-9_]{1,32}$')
+verification_code_regex = re.compile(r'^\d{1,6}$')
 
 
 def non_empty_str(value):
@@ -28,6 +29,18 @@ def optional_supported_locale(value):
 def message_validator(value):
     format_ = value['format']
     body = value['body']
+
+    if format_ == MessageFormats.VERIFICATION:
+        if not isinstance(body, dict):
+            return False
+        code = body.get('code')
+        time_min = body.get('time')
+        if not isinstance(code, str) or verification_code_regex.match(code) is None:
+            return False
+        if not isinstance(time_min, int) or time_min <= 0:
+            return False
+        return True
+
     if format_ == MessageFormats.TEXT and isinstance(body, str):
         return True
     if format_ == MessageFormats.HTML and isinstance(body, str):
@@ -49,6 +62,11 @@ class ChannelParams(metaclass=Params):
     group = Validator('group').null().default(None)
 
     phone = Validator('phone').to(str).bool(non_empty_str, message='Invalid phone')
+    code = Validator('code').to(str).bool(
+        lambda v: verification_code_regex.match(v) is not None,
+        message='Invalid verification code',
+    )
+    time = Validator('time').to(int).bool(positive_int, message='Invalid verification time')
     mail = Validator('mail').to(str).bool(non_empty_str, message='Invalid mail')
     subject = Validator('subject').null().default(None)
     locale = Validator('locale').null().default(None).bool(optional_supported_locale, message='Invalid locale')

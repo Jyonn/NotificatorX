@@ -3,7 +3,8 @@ class MessageFormats:
     HTML = 'html'
     MARKDOWN = 'markdown'
     JSON = 'json'
-    ALL = (TEXT, HTML, MARKDOWN, JSON)
+    VERIFICATION = 'verification'
+    ALL = (TEXT, HTML, MARKDOWN, JSON, VERIFICATION)
 
     @classmethod
     def all(cls):

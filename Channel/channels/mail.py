@@ -25,6 +25,7 @@ class Mail(BaseChannel):
         MessageFormats.TEXT,
         MessageFormats.HTML,
         MessageFormats.MARKDOWN,
+        MessageFormats.VERIFICATION,
     }
     mail_accounts = Global.mail_accounts
     _rotation_index = 0
@@ -100,8 +101,14 @@ class Mail(BaseChannel):
     @classmethod
     def handler(cls, target: str, message: dict, options: dict, account: Account, format_: str):
         locale = resolve_locale(options=options, message=message, default=Global.DEFAULT_NOTIFY_LOCALE)
-        subject = message.get('title') or translate(locale, 'mail.default_subject')
-        content = message.get('body')
+        if format_ == MessageFormats.VERIFICATION and isinstance(message.get('body'), dict):
+            code = str(message['body'].get('code'))
+            time_min = message['body'].get('time')
+            subject = message.get('title') or translate(locale, 'mail.verification_subject')
+            content = translate(locale, 'mail.verification_content', code=code, time=time_min)
+        else:
+            subject = message.get('title') or translate(locale, 'mail.default_subject')
+            content = message.get('body')
         recipient_name = options.get('recipient_name') or options.get('appellation')
         html = cls.build_html(format_, subject, content, options, locale)
         from_name = get_brand_name(

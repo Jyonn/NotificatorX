@@ -64,7 +64,7 @@ class Account(Model):
 
     @classmethod
     def get_all(cls):
-        return cls.objects.all().dict(cls.d)
+        return cls.objects.all().map(cls.d)
 
     def renew_token(self):
         self.token = get_random_string(length=32)

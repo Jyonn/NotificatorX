@@ -159,6 +159,11 @@ class Global:
     SMTP_SERVER = Config.get_value_by_key(CI.SMTP_SERVER)
 
     YUNPIAN_APPKEY = Config.get_value_by_key(CI.YUNPIAN_APPKEY)
+    ALI_SMS_ACCESS_KEY_ID = Config.get_value_by_key(CI.ALI_SMS_ACCESS_KEY_ID)
+    ALI_SMS_ACCESS_KEY_SECRET = Config.get_value_by_key(CI.ALI_SMS_ACCESS_KEY_SECRET)
+    ALI_SMS_ENDPOINT = Config.get_value_by_key(CI.ALI_SMS_ENDPOINT, 'dypnsapi.aliyuncs.com')
+    ALI_SMS_SIGN_NAME = Config.get_value_by_key(CI.ALI_SMS_SIGN_NAME, '速通互联验证码')
+    ALI_SMS_TEMPLATE_CODE = Config.get_value_by_key(CI.ALI_SMS_TEMPLATE_CODE, '100001')
 
     DEFAULT_NOTIFY_LOCALE = normalize_locale(Config.get_value_by_key(CI.NOTIFY_DEFAULT_LOCALE, 'en-US'))
     BRAND_NAME_EN = Config.get_value_by_key(CI.NOTIFY_BRAND_NAME_EN, 'Meadow Inbox')

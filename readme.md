@@ -77,7 +77,21 @@ Create payload example:
 
 The following settings are required to be configured in `Config_config` table:
 
-- `YUNPIAN_APPKEY`: yunpian appkey, you should apply for it from [yunpian](https://www.yunpian.com/)
+- `ALI_SMS_SIGN_NAME`: Aliyun SMS sign name
+- `ALI_SMS_TEMPLATE_CODE`: Aliyun SMS template code
+- `ALI_SMS_ENDPOINT`: optional, default `dypnsapi.aliyuncs.com`
+- `ALI_SMS_ACCESS_KEY_ID`: optional when using default credential chain
+- `ALI_SMS_ACCESS_KEY_SECRET`: optional when using default credential chain
+
+SMS channel now only supports verification messages and only China mainland mobile numbers (`+86`).
+
+Set AK/SK into `Config` quickly:
+
+```bash
+python3 scripts/upsert_aliyun_sms_keys.py \
+  --access-key-id "<your_access_key_id>" \
+  --access-key-secret "<your_access_key_secret>"
+```
 
 ### Install Notification Client
 
@@ -109,8 +123,9 @@ notificator.mail(
 
 # sms notification
 notificator.sms(
-    content='content',
     phone='phone number',
+    code='123456',
+    time=5,
 )
 
 # bark notification
@@ -178,12 +193,21 @@ notificator.webhook(
 
 Format support:
 
-- `sms`: `text`
-- `mail`: `text`, `html`, `markdown`
+- `sms`: `verification` only
+- `mail`: `text`, `html`, `markdown`, `verification`
 - `bark`: `text`, `markdown`
 - `webhook`: `text`, `json`
 
 If a channel does not support the selected format (for example, `sms` + `json`), the request is rejected.
+
+Verification format:
+
+- `message.format = "verification"`
+- `message.body` must be object: `{"code": "123456", "time": 5}`
+- `code`: digit string, max length `6`
+- `time`: positive integer (minutes)
+- sms/mail will render full sentence automatically from `code` + `time`
+- sms target must be a China mainland mobile number (`+86`)
 
 Mail options (recommended):
 
@@ -193,11 +217,12 @@ Mail options (recommended):
 - `action_text`: CTA button text (default: `View Details`)
 - `footer_note`: extra footer text
 
-SMS locale behavior:
+SMS template behavior (Aliyun):
 
-- `options.locale` / `message.locale` also applies to sms default template
-- `en-US`: `[Notificator] {name}: {message}`
-- `zh-CN`: `【Notificator】{name}：{message}`
+- sms sends `code/time` through Aliyun template parameters
+- default parameters include: `code`, `time`, `min`
+- you can pass `deliveries[].options.template_param` to append extra variables
+- locale does not affect sms text; final copy is controlled by Aliyun template content
 
 Locale precedence:
 
@@ -213,3 +238,11 @@ Brand defaults:
 Legacy compatibility:
 
 - `appellation` is still accepted and mapped to `recipient_name`
+
+HTTP test files are organized in `tests/http/`:
+
+- `tests/http/account-crud.http`
+- `tests/http/mail-senders-admin.http`
+- `tests/http/channel-mail.http`
+- `tests/http/channel-sms-verification.http`
+- `tests/http/channel-negative.http`
